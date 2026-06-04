@@ -65,7 +65,7 @@ End-to-end cleaning pipeline for all five tables — handling 27 channel typos, 
 ### Experiment Design Document
 A/B test design to validate whether a dedicated `<100-hour SLA queue` for API Integration Failure tickets recovers engagement. Covers MDE (697 actions), power (80%), sample size (40 accounts per group), and 16-week timeline.
 
-📄 [docs/experiment_design.md]([./docs/experiment_design.docx](https://github.com/JATIN317/CloudSync-Analytics/blob/main/docs/experiment_design))
+📄 [docs/experiment_design.md](https://github.com/JATIN317/CloudSync-Analytics/blob/main/docs/experiment_design)
 
 ---
 
