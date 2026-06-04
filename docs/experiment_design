@@ -1,0 +1,101 @@
+EXPERIMENT DESIGN DOCUMENT
+CloudSync SaaS Product Analytics — Recommendation Validation
+Document Type: A/B Test Design Spec  |  Author: Jatin  |  Date: Q1 2025
+
+1. BUSINESS CONTEXT
+The root-cause investigation confirmed that API Integration Failure resolution time tripled for Enterprise-Outbound accounts in July 2024 — from 65 hours in June to 303 hours in July — and remained above 280 hours through December. This support burden preceded a 15.7% decline in core product engagement and a 27.8% Q4 churn rate versus 10% for the control cohort.
+The recommended intervention is operational: establish a dedicated support queue for Enterprise-Outbound API Integration Failure tickets with a <100-hour SLA target. This removes the primary engagement driver without requiring any engineering work.
+Before committing budget and support headcount to this intervention, we need to validate that reducing resolution time actually recovers engagement — not just that the two metrics were correlated.
+
+2. EXPERIMENT OBJECTIVE
+Question	Does assigning a dedicated <100-hour SLA queue for Enterprise-Outbound API Integration Failure tickets cause measurable recovery in core product engagement?
+Hypothesis	Reducing API Integration Failure resolution time from ~300 hours to <100 hours will increase average core_actions_logged per account in the treatment group relative to control.
+Why this matters	Engagement is the leading indicator of renewal. Recovering 50% of the observed 15.7% engagement decline would reduce the next renewal cycle's churn risk from ~28% toward the ~10% Inbound benchmark.
+
+3. EXPERIMENTAL DESIGN
+Unit of analysis	Customer account (account-level randomization — not user-level or ticket-level)
+Treatment	Dedicated support queue for API Integration Failure tickets. SLA target: <100-hour resolution. Route to integration specialist team.
+Control	Current process — standard support queue, no dedicated routing, no SLA target.
+Randomization	Random assignment of Enterprise-Outbound accounts to treatment or control at the start of the experiment. 40 accounts per group (80 total Enterprise-Outbound).
+Blinding	Partial — customers are not told which group they are in. Support agents know which tickets are in the dedicated queue (operational necessity).
+
+Why <100-hour SLA target?
+The <100-hour SLA target is derived from the dose-response analysis in the investigation: accounts with average resolution time below 100 hours (Low Burden tier) declined only -9.5%, versus -22.3% for accounts above the 100-hour threshold. The 100-hour mark represents the empirically observed tipping point where support burden begins materially damaging engagement.
+
+Why account-level and not ticket-level randomization: If individual tickets were randomized, the same account could receive fast resolution on one ticket and slow resolution on the next. The engagement signal would be noisy. Account-level assignment means all tickets for a given account receive consistent treatment throughout the experiment.
+
+4. METRICS
+Primary Metric — What we are trying to move
+Metric	avg core_actions_logged per account per month
+Baseline (H1 2024)	8,902 actions/account/month
+Current level (H2 2024)	7,507 actions/account/month
+Observed decline	1,395 actions (-15.7%)
+Target recovery	50% of the decline = 697 actions (returning to ~8,204)
+
+Secondary Metric — The mechanism we expect to drive it
+Metric	avg resolution_time_hrs for API Integration Failure tickets (resolved tickets only)
+Baseline (H1 2024)	150 hours
+Current level (H2 2024)	304 hours
+SLA target (treatment)	<100 hours
+Why it's secondary	Resolution time is the intervention variable — we are directly controlling it. Engagement is the outcome variable we need to verify moves as a result.
+
+Lagging Business Outcome — What the CEO is actually watching
+Metric	Q4 Outbound renewal/churn rate
+Current	27.78% (Q4 2024)
+Expected Range	14–19% if engagement recovery of ≥50% is achieved (conservative midpoint between current rate and Inbound control baseline of 10%)
+Why it's lagging	Churn is measured at renewal decision points. A 3-month experiment will not capture a full renewal cycle. Monitor as a 6-month post-experiment signal.
+Why no direct model	No engagement-to-churn regression exists in the 5-table schema. The expected churn range is inferred from the dose-response pattern and Inbound control benchmark — not a derived formula.
+Guardrail Metrics — What must not worsen
+Guardrail	Threshold	Why
+Enterprise-Inbound churn rate	Must not increase >2pp	Dedicated queue should not deprioritize Inbound accounts
+Overall support ticket volume	Must not increase >20%	SLA guarantee should not incentivize unnecessary ticket creation
+Treatment account churn rate	Must not exceed control group churn	Treatment should reduce or maintain churn, not accelerate it
+
+5. SAMPLE SIZE & STATISTICAL POWER
+The numbers
+Baseline mean	8,902 core actions/account/month (H1 2024 average)
+Baseline std deviation	1,732 actions (observed from H1 data)
+Minimum Detectable Effect (MDE)	697 actions = 7.8% improvement (50% recovery of the 1,395 action decline)
+Significance level (alpha)	0.05 — 5% chance of a false positive (concluding the SLA works when it doesn't)
+Statistical power	0.80 — 80% chance of detecting a true effect of this size
+Required n per group	97 account-months per group
+Available accounts per group	40 per group (80 total Enterprise-Outbound, split 40/40)
+Months needed	97 / 40 = 2.4 months → minimum 3 months of observation
+Recommended duration	16 weeks total: 2 weeks setup + randomization, 12 weeks measurement (3 months), Week 15 decision gate to capture a complete renewal signal
+
+How to read MDE: If the true effect of the SLA intervention is at least 697 actions per account per month, this experiment has an 80% chance of detecting it with statistical significance. Effects smaller than 697 actions may exist but this experiment would not be reliably powered to confirm them.
+Why 80% power and not 95%: Higher power requires larger samples. With only 40 accounts per group, requiring 95% power would demand more months of observation than a single renewal cycle. 80% power is the standard for exploratory operational experiments.
+
+6. ANALYSIS PLAN
+Pre-registration: The hypothesis, primary metric, MDE, significance level, power, and decision rule defined in this document are locked before the experiment begins. Results will be read once — at Week 15. Interim checks are for guardrail monitoring only, not for early stopping on the primary metric.
+Primary analysis
+Method	Two-sample independent t-test on monthly avg core_actions_logged per account
+Comparison	Treatment group mean vs Control group mean across the experiment window
+Time window	Months 1-3 of experiment (excluding any accounts that churn — analyze on available data)
+Significance	p < 0.05, two-tailed
+Effect size	Report Cohen's d alongside p-value. A statistically significant but tiny effect is not operationally meaningful.
+
+Secondary analysis
+Pre-post check	For each group, compare avg actions in experiment months vs H2 2024 baseline. Treatment group should improve; control group should be stable.
+Dose-response replication	Within the treatment group, do accounts where SLA was actually met (resolution <100 hrs) show more engagement recovery than accounts where SLA was missed?
+Mechanism validation	Confirm resolution time actually dropped for treatment group before interpreting engagement results. If resolution time did not change, the engagement signal is uninterpretable.
+
+7. RISKS & LIMITATIONS
+Risk	Likelihood	Mitigation
+80 total accounts — small sample	High	Use 3 months of observations to increase statistical power. Report confidence intervals, not just p-values.
+Novelty effect — treatment accounts may use product more initially just because they notice faster support	Medium	Monitor engagement in month 1 vs months 2-3 separately. If month 1 is higher and trend reverses, flag as novelty effect.
+Contamination — control accounts may hear about the SLA and submit more tickets	Low	Account-level randomization and no customer-facing communication about the experiment reduces this risk.
+SLA not achieved in practice dedicated queue does not actually deliver <100-hr resolution	Medium	Monitor resolution time weekly. If treatment resolution time does not drop below 100 hrs by week 4, pause and investigate the operational setup.
+
+
+
+Secular trend — CloudSync ships a product update or pricing change during the experiment window that affects all accounts	Medium	The control group handles this. If engagement improves in both treatment and control, subtract the control group's improvement before interpreting the treatment effect. If a major product release occurs during weeks 3-14, document it and apply difference-in-differences analysis.
+
+H1 baseline selection effect — accounts that experienced more API failures had slightly higher H1 engagement (9,185 vs 8,490 for low-burden accounts), suggesting pre-existing heterogeneity	Medium	Randomization is the structural fix. If treatment and control groups are randomly assigned from the same 80-account pool, pre-existing account characteristics are distributed equally across groups. Check balance at experiment start: compare H1 engagement averages for treatment vs control. If they differ by more than 200 actions, re-randomize.
+
+8. DECISION RULE
+If p < 0.05 AND effect > MDE	Implement dedicated queue permanently. Expand to all Enterprise-Inbound accounts in next quarter.
+If p < 0.05 AND effect < MDE	Effect is real but small. Investigate whether other factors (product changes, seasonality) are limiting recovery before scaling.
+If p > 0.05	Cannot conclude the SLA intervention drives engagement recovery at this sample size. Extend experiment or investigate whether resolution time actually changed in the treatment group.
+If guardrail is breached	Pause experiment immediately. Prioritize the damaged cohort before continuing.
+
