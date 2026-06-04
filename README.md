@@ -60,7 +60,7 @@ Charter validation (Q0–Q5) + hypothesis testing (H9, H10, H2) + falsification 
 ### Python Data Cleaning Notebook
 End-to-end cleaning pipeline for all five tables — handling 27 channel typos, 7 CRM duplicates, 1 ghost account, 59 MRR/tier mismatches, and 156 open ticket records.
 
-📄 [python/cloudsync_cleaning.py](./python/cloudsync_cleaning.py)
+📄 [Link](https://github.com/JATIN317/CloudSync-Analytics/blob/main/python/cloudsync_cleaning_notebook.py)
 
 ### Experiment Design Document
 A/B test design to validate whether a dedicated `<100-hour SLA queue` for API Integration Failure tickets recovers engagement. Covers MDE (697 actions), power (80%), sample size (40 accounts per group), and 16-week timeline.
