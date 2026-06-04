@@ -50,7 +50,7 @@ Solution    → Dose-response-derived SLA recommendation + A/B experiment design
 ### Power BI Dashboard
 6-page dashboard covering Executive Overview, Engagement Collapse, Support Burden, Causal Chain, and Recommendation.
 
-🔗 [View live dashboard →]([https://app.powerbi.com/YOUR-LINK-HERE](https://app.powerbi.com/links/1ZpkrNPliq?ctid=931ed907-4be0-494c-8f96-17c8a5af1736&pbi_source=linkShare&bookmarkGuid=9a0801a4-9b68-4cc4-89d7-e3b6a626ddd3))
+🔗 [View live dashboard →](https://app.powerbi.com/reportEmbed?reportId=5dc4512f-dcb0-4ce2-a6e2-73dc4c241109&autoAuth=true&ctid=931ed907-4be0-494c-8f96-17c8a5af1736)
 
 ### SQL Analysis Notebook
 Charter validation (Q0–Q5) + hypothesis testing (H9, H10, H2) + falsification queries. Every query has a 3-line annotation explaining what it tests, what it found, and how it is used in the investigation.
